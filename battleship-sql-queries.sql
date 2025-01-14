@@ -26,3 +26,23 @@ WHERE
     numGuns = (SELECT MAX(numGuns) FROM Classes)
 ORDER BY 
     class;
+
+-- Query to find the country that produced the highest number of battleship (bb) classes
+-- 1. SELECT `country` and the count of rows (battleship classes) grouped by country.
+-- 2. COUNT(*) counts all rows in each group where `type` is 'bb' (battleship).
+-- 3. Filter the rows to include only battleship classes using the WHERE clause (`type = 'bb'`).
+-- 4. GROUP BY groups the results by `country` to calculate the count for each country.
+-- 5. ORDER BY sorts the results in descending order based on the count of battleship classes (`num_battleships`).
+-- 6. LIMIT 1 ensures only the top country with the maximum number of battleship classes is returned.
+SELECT 
+    country, 
+    COUNT(*) as num_battleships
+FROM 
+    Classes
+WHERE 
+    type = 'bb'
+GROUP BY
+    country
+ORDER BY 
+    num_battleships DESC
+LIMIT 1;
