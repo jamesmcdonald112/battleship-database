@@ -71,3 +71,39 @@ GROUP BY
     c.country
 ORDER BY 
     num_sunk_ships DESC
+
+
+
+-- Query to find the ships with the earliest launch dates for each country
+-- 1. SELECT the ship name (`s.name`), launch date (`s.launched`), and country of origin (`c.country`).
+-- 2. JOIN the `Ships` table (`s`) with the `Classes` table (`c`) on the `class` column 
+--    to associate each ship with its respective country.
+-- 3. Use a WHERE clause with a subquery to filter ships that match the earliest launch date 
+--    for their respective country:
+--    a. Subquery retrieves the minimum launch date (`MIN(s2.launched)`) for each country (`c2.country`).
+--    b. GROUP BY groups the subquery results by `c2.country` to calculate the earliest launch date for each country.
+--    c. The main query filters ships where the combination of country and launch date matches the subquery result.
+-- 4. ORDER BY the launch date (`s.launched`) in ascending order for chronological results.
+
+SELECT 
+    s.name,       -- Ship name
+    s.launched,   -- Launch date
+    c.country     -- Country of origin
+FROM 
+    Ships s
+JOIN Classes c 
+    ON s.class = c.class -- Join to associate ships with their respective countries
+WHERE 
+    (c.country, s.launched) IN (
+        SELECT 
+            c2.country,              -- Country of origin
+            MIN(s2.launched)         -- Earliest launch date for that country
+        FROM 
+            Ships s2
+        JOIN Classes c2 
+            ON s2.class = c2.class   -- Join for the subquery to link ships and classes
+        GROUP BY 
+            c2.country               -- Group by country to calculate earliest launch date
+    )
+ORDER BY 
+    s.launched ASC; -- Sort results by launch date in ascending order
