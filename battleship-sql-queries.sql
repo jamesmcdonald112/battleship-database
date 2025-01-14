@@ -107,3 +107,36 @@ WHERE
     )
 ORDER BY 
     s.launched ASC; -- Sort results by launch date in ascending order
+
+
+
+-- Query to find the ship classes involved in at least three battles
+-- and count the number of damaged, sunk, and OK ships for each class.
+-- 1. SELECT the ship's class and the count of ships grouped by their result:
+--    a. `SUM(o.result = 'damaged')` counts ships with the "damaged" result.
+--    b. `SUM(o.result = 'sunk')` counts ships with the "sunk" result.
+--    c. `SUM(o.result = 'OK')` counts ships with the "OK" result.
+-- 2. JOIN the `Ships` table (`s`) with the `Classes` table (`c`) on `class`
+--    to associate each ship with its respective class.
+-- 3. JOIN the `Outcomes` table (`o`) on the ship name (`s.name = o.ship`)
+--    to link ships to their battle outcomes.
+-- 4. GROUP BY `s.class` to aggregate the results for each ship class.
+-- 5. HAVING `COUNT(*) >= 3` ensures only classes with at least three battle outcomes are included.
+-- 6. The query results include the class name, number of damaged ships, number of sunk ships, 
+--    and number of OK ships.
+
+SELECT 
+    s.class,                      -- Ship class
+    SUM(o.result = 'damaged') AS num_damaged, -- Count of damaged ships
+    SUM(o.result = 'sunk') AS num_sunk,       -- Count of sunk ships
+    SUM(o.result = 'OK') AS num_ok           -- Count of OK ships
+FROM 
+    Ships s
+JOIN Classes c 
+    ON s.class = c.class          -- Join ships with their respective classes
+JOIN Outcomes o 
+    ON s.name = o.ship            -- Join ships with their battle outcomes
+GROUP BY 
+    s.class                       -- Group results by ship class
+HAVING 
+    COUNT(*) >= 3;                -- Include only classes engaged in at least three battles
