@@ -46,3 +46,28 @@ GROUP BY
 ORDER BY 
     num_battleships DESC
 LIMIT 1;
+
+
+
+-- Query to find the number of sunken ships attributed to each country
+-- 1. SELECT `c.country` and the count of `o.result` where the result is "sunk".
+-- 2. JOIN `Classes` (c) with `Ships` (s) on the ship's class to associate ships with their classes.
+-- 3. JOIN `Ships` (s) with `Outcomes` (o) on the ship's name to link ships with their outcomes in battles.
+-- 4. WHERE clause filters results to include only rows where `o.result = "sunk"`.
+-- 5. GROUP BY `c.country` to aggregate the count of sunken ships for each country.
+-- 6. ORDER BY `num_sunk_ships DESC` to sort the results from the highest to the lowest number of sunken ships.
+SELECT 
+    c.country, 
+    COUNT(o.result) as num_sunk_ships
+FROM 
+    Classes c 
+JOIN Ships s
+    ON c.class = s.class
+JOIN Outcomes o
+    ON s.name = o.ship 
+WHERE 
+	o.result = "sunk"
+GROUP BY 
+    c.country
+ORDER BY 
+    num_sunk_ships DESC
